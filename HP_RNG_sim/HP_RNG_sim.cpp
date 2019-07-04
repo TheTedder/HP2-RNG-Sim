@@ -4,10 +4,46 @@
 #include "pch.h"
 #include <iostream>
 
+constexpr unsigned int TIMES = UINT32_MAX;
+
+//int RandRange(int Min, int Max) {
+//	int Range = Max - Min;
+//	int R = Range > 0 ? rand() % Range : 0;
+//	return R + Min;
+//}
+
+float appFrand() {
+	return rand() / (float)RAND_MAX;
+}
+
+float RandRange(float Min, float Max) {
+	return Min + (Max - Min) * appFrand();
+}
+
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	unsigned int good = 0U;
+	int gryff;
+	int slyth;
+
+	for (unsigned int i = 0U; i < TIMES; i++)
+	{
+		gryff = 30;
+		slyth = (int)RandRange(40.0F, 80.0F);
+		while (gryff < slyth)
+		{
+			gryff += (int)RandRange(1.0F, 10.0F);
+		}
+		if (gryff - slyth <= 5)
+		{
+			good += 1U;
+		}
+		std::cout << "trial #" << (i+1) << ": \n"
+			<< "good: " << good << "\n";
+	}
 }
+
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
