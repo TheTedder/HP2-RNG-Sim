@@ -1,7 +1,6 @@
 // HP_RNG_sim.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include "pch.h"
 #include <iostream>
 
 constexpr unsigned int TIMES = UINT32_MAX;
@@ -42,8 +41,6 @@ int main()
 			<< "good: " << good << "\n";
 	}
 }
-
-
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
