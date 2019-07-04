@@ -12,11 +12,11 @@ constexpr unsigned int TIMES = UINT32_MAX;
 //	return R + Min;
 //}
 
-float appFrand() {
+inline float appFrand() {
 	return rand() / (float)RAND_MAX;
 }
 
-float RandRange(float Min, float Max) {
+inline float RandRange(float Min, float Max) {
 	return Min + (Max - Min) * appFrand();
 }
 
