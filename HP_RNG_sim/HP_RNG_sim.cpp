@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 			while (gryff < slyth);
 			if (gryff - slyth <= 5)
 			{
-				good += 1U;
+				good++;
 			}
 			i++;
 		}
