@@ -1,22 +1,48 @@
 // HP_RNG_sim.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#define WIN32_LEAN_AND_MEAN // Meme
+
+#include <Windows.h>
+#include <conio.h>
 #include <iostream>
-#include <windows.h>
+#include <thread>
 
-#define TIMES 500000U //set this to how many trials you want to perform
+// For getchar
+#include <stdio.h>
 
-//int RandRange(int Min, int Max) {
-//	int Range = Max - Min;
-//	int R = Range > 0 ? rand() % Range : 0;
-//	return R + Min;
-//}
+#define TIMES 1000
 
-inline float appFrand() {
+static bool bThreadbreak = false;
+static bool bPause = false;
+
+// Thread function for pausing
+void GetKBInRunner()
+{
+	while (!bThreadbreak)
+	{
+		int temp = _kbhit();
+
+		// Program ended
+		//if (temp == EOF)
+			//break;
+
+		if (temp != 0 && _getch() == 'p')
+		{
+			// Toggle pausing
+			bPause = !bPause;
+		}
+	}
+}
+
+// UE functions. Inlined for preformance reasons
+inline float appFrand()
+{
 	return rand() / (float)RAND_MAX;
 }
 
-inline float RandRange(float Min, float Max) {
+inline float RandRange(float Min, float Max)
+{
 	return Min + (Max - Min) * appFrand();
 }
 
@@ -26,12 +52,25 @@ int main()
 	unsigned int good = 0U;
 	int gryff;
 	int slyth;
+
+	// Set the position of the cursor to "clear" the screen without having
+	// C++ init a new buffer each time
 	COORD newPos;
 	newPos.X = 0;
 	newPos.Y = 0;
-	
+
+	// Init a thread for pausing
+	std::thread pauseThread(GetKBInRunner);
+
+	// Loop until desired
 	while (times < TIMES)
 	{
+		// Infinite loop to pause
+		while (bPause) 
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+
 		gryff = 30;
 		slyth = (int)RandRange(40.0F, 80.0F);
 		do
@@ -43,11 +82,19 @@ int main()
 			good += 1U;
 		}
 		times++;
-		
+
+		// "Clear" the screen
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), newPos);
-		std::cout << "trial #" << times << ": \n"
-			<< "good: " << good << "\n";
+
+		// Now print
+		std::cout << "Trial: " << times << "\t " << "Number of good runs: " << good << "\n";
 	}
+
+	// Break the thread
+	bThreadbreak = true;
+
+	// Now close it
+	pauseThread.join();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
