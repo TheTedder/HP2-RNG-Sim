@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-constexpr unsigned int TIMES = UINT32_MAX;
+#define TIMES 500000U //set this to how many trials you want to perform
 
 //int RandRange(int Min, int Max) {
 //	int Range = Max - Min;
