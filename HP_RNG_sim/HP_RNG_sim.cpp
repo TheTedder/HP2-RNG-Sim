@@ -21,24 +21,30 @@ inline float RandRange(float Min, float Max) {
 
 int main()
 {
+	unsigned int times = 0U;
 	unsigned int good = 0U;
 	int gryff;
 	int slyth;
-
-	for (unsigned int i = 0U; i < TIMES; i++)
+	
+	while (times < TIMES)
 	{
 		gryff = 30;
 		slyth = (int)RandRange(40.0F, 80.0F);
-		while (gryff < slyth)
+		do
 		{
 			gryff += (int)RandRange(1.0F, 10.0F);
-		}
+		} while (gryff < slyth);
 		if (gryff - slyth <= 5)
 		{
 			good += 1U;
 		}
-		std::cout << "trial #" << (i+1) << ": \n"
+		times++;
+#ifdef WIN32
+		system("cls");
+#endif
+		std::cout << "trial #" << times << ": \n"
 			<< "good: " << good << "\n";
+		
 	}
 }
 
