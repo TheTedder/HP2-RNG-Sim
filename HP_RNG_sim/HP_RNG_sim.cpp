@@ -3,15 +3,12 @@
 
 #define WIN32_LEAN_AND_MEAN // Meme
 
-#include <Windows.h>
 #include <conio.h>
 #include <iostream>
 #include <thread>
 
 // For getchar
 #include <stdio.h>
-
-#define TIMES 1000
 
 static bool bThreadbreak = false;
 static bool bPause = false;
@@ -27,10 +24,18 @@ void GetKBInRunner()
 		//if (temp == EOF)
 			//break;
 
-		if (temp != 0 && _getch() == 'p')
+		if (temp != 0)
 		{
-			// Toggle pausing
-			bPause = !bPause;
+			int ch = _getch();
+			if (ch == 'q' && bPause)
+			{
+				bThreadbreak = true;
+			}
+			else if (ch == 'p')
+			{
+				// Toggle pausing
+				bPause = !bPause;
+			}
 		}
 	}
 }
@@ -46,57 +51,70 @@ inline float RandRange(float Min, float Max)
 	return Min + (Max - Min) * appFrand();
 }
 
-int main()
+int main(int argc, char** argv)
 {
-	unsigned int times = 0U;
-	unsigned int good = 0U;
-	int gryff;
-	int slyth;
-
-	// Set the position of the cursor to "clear" the screen without having
-	// C++ init a new buffer each time
-	COORD newPos;
-	newPos.X = 0;
-	newPos.Y = 0;
-
-	// Init a thread for pausing
-	std::thread pauseThread(GetKBInRunner);
-
-	// Loop until desired
-	while (times < TIMES)
+	if (argc == 1)
 	{
-		// Infinite loop to pause
-		while (bPause) 
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-
-		gryff = 30;
-		slyth = (int)RandRange(40.0F, 80.0F);
-		do
-		{
-			gryff += (int)RandRange(1.0F, 10.0F);
-		} while (gryff < slyth);
-		if (gryff - slyth <= 5)
-		{
-			good += 1U;
-		}
-		times++;
-
-		// "Clear" the screen
-		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), newPos);
-
-		// Now print
-		std::cout << "Trial: " << times << "\t " << "Number of good runs: " << good << "\n";
+		std::cerr << "You need to pass an argument that specifies how many trials to run.\n";
+		return -1;
 	}
 
-	// Break the thread
-	bThreadbreak = true;
+	else
+	{
+		unsigned long i = 0U;
+		unsigned long times = strtoul(argv[1], nullptr, 10);
+		std::cout << "Running " << times << " trials. Press \"p\" to pause.\n";
+		unsigned long good = 0U;
+		int gryff;
+		int slyth;
 
-	// Now close it
-	pauseThread.join();
+		// Init a thread for pausing
+		std::thread pauseThread(GetKBInRunner);
+
+		// Loop until desired
+		while (i < times)
+		{
+			// Infinite loop to pause
+			if (bPause) {
+				std::cout << "Execution paused. Press \"p\" to resume or \"q\" to quit.\n"
+					<< "Trials: " << i << "\nGood: " << good << "\n";
+				do
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+					if (bThreadbreak) {
+						std::cout << "Execution terminated.";
+						pauseThread.join();
+						return 0;
+					}
+				}
+				while (bPause);
+				std::cout << "Resuming...\n";
+			}
+
+			gryff = 30;
+			slyth = (int)RandRange(40.0F, 80.0F);
+			do
+			{
+				gryff += (int)RandRange(1.0F, 10.0F);
+			} while (gryff < slyth);
+			if (gryff - slyth <= 5)
+			{
+				good += 1U;
+			}
+			i++;
+		}
+
+		std::cout << "Execution completed.\nTrials: " << times << "\nGood: " << good;
+
+		// Break the thread
+		bThreadbreak = true;
+
+		// Now close it
+		pauseThread.join();
+
+		return 0;
+	}
 }
-
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
 
