@@ -6,8 +6,6 @@
 #include <conio.h>
 #include <iostream>
 #include <thread>
-
-// For getchar
 #include <stdio.h>
 #include <time.h>
 
