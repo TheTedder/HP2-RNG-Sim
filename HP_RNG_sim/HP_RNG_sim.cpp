@@ -98,7 +98,8 @@ int main(int argc, char** argv)
 			do
 			{
 				gryff += (int)RandRange(1.0F, 10.0F);
-			} while (gryff < slyth);
+			}
+			while (gryff < slyth);
 			if (gryff - slyth <= 5)
 			{
 				good += 1U;
