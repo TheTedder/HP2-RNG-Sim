@@ -75,13 +75,15 @@ int main(int argc, char** argv)
 		while (i < times)
 		{
 			// Infinite loop to pause
-			if (bPause) {
+			if (bPause)
+			{
 				std::cout << "Execution paused. Press \"p\" to resume or \"q\" to quit.\n"
 					<< "Trials: " << i << "\nGood: " << good << "\n";
 				do
 				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(10));
-					if (bThreadbreak) {
+					if (bThreadbreak)
+					{
 						std::cout << "Execution terminated.";
 						pauseThread.join();
 						return 0;
