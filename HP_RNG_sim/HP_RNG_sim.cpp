@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <windows.h>
 
 #define TIMES 500000U //set this to how many trials you want to perform
 
@@ -25,6 +26,9 @@ int main()
 	unsigned int good = 0U;
 	int gryff;
 	int slyth;
+	COORD newPos;
+	newPos.X = 0;
+	newPos.Y = 0;
 	
 	while (times < TIMES)
 	{
@@ -39,12 +43,10 @@ int main()
 			good += 1U;
 		}
 		times++;
-#ifdef WIN32
-		system("cls");
-#endif
+		
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), newPos);
 		std::cout << "trial #" << times << ": \n"
 			<< "good: " << good << "\n";
-		
 	}
 }
 
