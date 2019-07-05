@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	srand((unsigned)time(NULL)); //do this bcz UE does this
 	if (argc == 1)
 	{
-		std::cerr << "You need to pass a number an argument that specifies how many trials to run.";
+		std::cerr << "You need to pass a number as an argument that specifies how many trials to run.";
 		return -1;
 	}
 
