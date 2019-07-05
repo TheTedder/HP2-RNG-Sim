@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 	srand((unsigned)time(NULL)); //do this bcz UE does this
 	if (argc == 1)
 	{
-		std::cerr << "You need to pass a number an argument that specifies how many trials to run.\n";
+		std::cerr << "You need to pass a number an argument that specifies how many trials to run.";
 		return -1;
 	}
 
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 		}
 		catch (std::invalid_argument ex)
 		{
-			std::cerr << "You need to pass a number as an argument that specifies how many trials to run.\n";
+			std::cerr << "You need to pass a number as an argument that specifies how many trials to run.";
 			return -1;
 		}
 		catch (std::out_of_range ex)
@@ -77,7 +77,11 @@ int main(int argc, char** argv)
 		}
 
 		unsigned long i = 0U;
-		std::cout << "Running " << times << " trials. Press \"p\" to pause.\n";
+		std::cout << "Running " << times << " trial";
+		if (times != 1U) {
+			std::cout << "s";
+		}
+		std::cout << ". Press \"p\" to pause.\n";
 		unsigned long good = 0U;
 		int gryff;
 		int slyth;
