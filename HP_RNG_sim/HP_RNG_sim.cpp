@@ -1,9 +1,10 @@
 #define WIN32_LEAN_AND_MEAN // Meme
 
-#include <string>
-#include <conio.h>
 #include <iostream>
 #include <thread>
+#include <string>
+#include <chrono>
+#include <conio.h>
 #include <stdio.h>
 #include <time.h>
 
@@ -89,6 +90,7 @@ int main(int argc, char** argv)
 		// Init a thread for pausing
 		std::thread pauseThread(GetKBInRunner);
 
+		auto start = std::chrono::high_resolution_clock::now();
 		// Loop until desired
 		while (i < times)
 		{
@@ -124,8 +126,11 @@ int main(int argc, char** argv)
 			}
 			i++;
 		}
-
-		std::cout << "Execution completed.\nTrials: " << times << "\nGood: " << good;
+		auto timeTaken = std::chrono::high_resolution_clock::now() - start;
+		long long millis = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken).count();
+		double seconds = millis / 1000.0;
+		std::cout << "Execution completed.\nTrials: " << times << "\nGood: " << good << "\n"
+			<< "Time elapsed: " << seconds << " seconds";
 
 		// Break the thread
 		bThreadbreak = true;
