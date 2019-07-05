@@ -3,6 +3,7 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <sstream>
 #include <chrono>
 #include <conio.h>
 #include <stdio.h>
@@ -58,86 +59,103 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	else
+	unsigned long times = 0U;
+	try
 	{
-		unsigned long times = 0U;
+		std::string str = argv[1];
+		times = std::stoul(str, NULL, 10);
+	}
+	catch (std::invalid_argument)
+	{
+		std::cerr << "You need to pass a number as an argument that specifies how many trials to run.";
+		return -1;
+	}
+	catch (std::out_of_range)
+	{
+		std::cerr << "The value " << argv[1] << " exceeds the maximum value of " << ULONG_MAX << ".\n";
+		times = ULONG_MAX;
+	}
+
+	int gryff_start = 30;
+
+	if (argc > 2)
+	{
 		try
 		{
-			std::string str = argv[1];
-			times = stoul(str, NULL, 10);
+			std::string str = argv[2];
+			gryff_start = std::stoi(str, NULL, 10);
 		}
-		catch (std::invalid_argument ex)
+		catch (std::invalid_argument)
 		{
-			std::cerr << "You need to pass a number as an argument that specifies how many trials to run.";
+			std::cerr << "You need to pass a number as an argument that specifies how many house points gryffindor starts with.";
 			return -1;
 		}
-		catch (std::out_of_range ex)
+		catch (std::out_of_range)
 		{
-			std::cerr << "The value " << argv[1] << " exceeds the maximum value of " << ULONG_MAX << ".\n";
-			times = ULONG_MAX;
+			std::cerr << "The value " << argv[2] << " exceeds the maximum value of " << INT_MAX << ".\n";
+			gryff_start = INT_MAX;
 		}
+	}
 
-		unsigned long i = 0U;
-		std::cout << "Running " << times << " trial";
-		if (times != 1U) {
-			std::cout << "s";
-		}
-		std::cout << ". Press \"p\" to pause.\n";
-		unsigned long good = 0U;
-		int gryff;
-		int slyth;
+	unsigned long i = 0U;
+	std::cout << "Running " << times << " trial";
+	if (times != 1U) {
+		std::cout << "s";
+	}
+	std::cout << ". Press \"p\" to pause.\n";
+	unsigned long good = 0U;
+	int gryff;
+	int slyth;
 
-		// Init a thread for pausing
-		std::thread pauseThread(GetKBInRunner);
+	// Init a thread for pausing
+	std::thread pauseThread(GetKBInRunner);
 
-		auto start = std::chrono::high_resolution_clock::now();
-		// Loop until desired
-		while (i < times)
+	auto start = std::chrono::high_resolution_clock::now();
+	// Loop until desired
+	while (i < times)
+	{
+		// Infinite loop to pause
+		if (bPause)
 		{
-			// Infinite loop to pause
-			if (bPause)
-			{
-				std::cout << "Execution paused. Press \"p\" to resume or \"q\" to quit.\n"
-					<< "Trials: " << i << "\nGood: " << good << "\n";
-				do
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(10));
-					if (bThreadbreak)
-					{
-						std::cout << "Execution terminated.";
-						pauseThread.join();
-						return 0;
-					}
-				}
-				while (bPause);
-				std::cout << "Resuming...\n";
-			}
-
-			gryff = 30;
-			slyth = (int)RandRange(40.0F, 80.0F);
+			std::cout << "Execution paused. Press \"p\" to resume or \"q\" to quit.\n"
+				<< "Trials: " << i << "\nGood: " << good << "\n";
 			do
 			{
-				gryff += (int)RandRange(1.0F, 10.0F);
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				if (bThreadbreak)
+				{
+					std::cout << "Execution terminated.";
+					pauseThread.join();
+					return 0;
+				}
 			}
-			while (gryff <= slyth);
-			if (gryff - slyth <= 5)
-			{
-				good++;
-			}
-			i++;
+			while (bPause);
+			std::cout << "Resuming...\n";
 		}
-		auto timeTaken = std::chrono::high_resolution_clock::now() - start;
-		long long millis = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken).count();
-		double seconds = millis / 1000.0;
-		std::cout << "Execution completed.\nTrials: " << times << "\nGood: " << good << "\n"
-			<< "Time elapsed: " << seconds << " seconds";
 
-		// Break the thread
-		bThreadbreak = true;
-
-		// Now close it
-		pauseThread.join();
-
-		return 0;
+		gryff = gryff_start;
+		slyth = (int)RandRange(40.0F, 80.0F);
+		while (gryff <= slyth)
+		{
+			gryff += (int)RandRange(1.0F, 10.0F);
+		}
+		if (gryff - slyth <= 5)
+		{
+			good++;
+		}
+		i++;
 	}
+	auto timeTaken = std::chrono::high_resolution_clock::now() - start;
+	long long millis = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken).count();
+	double seconds = millis / 1000.0;
+	std::cout << "Execution completed.\nTrials: " << times << "\nGood: " << good << "\n"
+		<< "Time elapsed: " << seconds << " seconds";
+
+	// Break the thread
+	bThreadbreak = true;
+
+	// Now close it
+	pauseThread.join();
+
+	return 0;
 }
