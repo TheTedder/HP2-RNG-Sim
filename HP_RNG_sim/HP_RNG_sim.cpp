@@ -9,6 +9,7 @@
 
 // For getchar
 #include <stdio.h>
+#include <time.h>
 
 static bool bThreadbreak = false;
 static bool bPause = false;
@@ -53,6 +54,7 @@ inline float RandRange(float Min, float Max)
 
 int main(int argc, char** argv)
 {
+	srand((unsigned)time(NULL)); //do this bcz UE does this
 	if (argc == 1)
 	{
 		std::cerr << "You need to pass an argument that specifies how many trials to run.\n";
@@ -99,7 +101,7 @@ int main(int argc, char** argv)
 			{
 				gryff += (int)RandRange(1.0F, 10.0F);
 			}
-			while (gryff < slyth);
+			while (gryff <= slyth);
 			if (gryff - slyth <= 5)
 			{
 				good++;
