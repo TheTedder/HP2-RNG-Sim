@@ -3,6 +3,7 @@
 
 #define WIN32_LEAN_AND_MEAN // Meme
 
+#include <string>
 #include <conio.h>
 #include <iostream>
 #include <thread>
@@ -55,14 +56,30 @@ int main(int argc, char** argv)
 	srand((unsigned)time(NULL)); //do this bcz UE does this
 	if (argc == 1)
 	{
-		std::cerr << "You need to pass an argument that specifies how many trials to run.\n";
+		std::cerr << "You need to pass a number an argument that specifies how many trials to run.\n";
 		return -1;
 	}
 
 	else
 	{
+		unsigned long times = 0U;
+		try
+		{
+			std::string str = argv[1];
+			times = stoul(str, NULL, 10);
+		}
+		catch (std::invalid_argument ex)
+		{
+			std::cerr << "You need to pass a number as an argument that specifies how many trials to run.\n";
+			return -1;
+		}
+		catch (std::out_of_range ex)
+		{
+			std::cerr << "The value " << argv[1] << " exceeds the maximum value of " << ULONG_MAX << ".\n";
+			times = ULONG_MAX;
+		}
+
 		unsigned long i = 0U;
-		unsigned long times = strtoul(argv[1], nullptr, 10);
 		std::cout << "Running " << times << " trials. Press \"p\" to pause.\n";
 		unsigned long good = 0U;
 		int gryff;
