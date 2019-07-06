@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <time.h>
 
+//historical accuracy
+#define RAND_MAX 0x7fff
+
 static bool bThreadbreak = false;
 static bool bPause = false;
 
